@@ -50,9 +50,10 @@ register_discovery() {
     if [ -n "$value" ]; then printf '%s\n' "$value"; else printf '%s\n' "$fallback"; fi
   }
 
-  if [ -n "$gateway" ]; then bridge_host="$gateway"; else bridge_host="$addon_host"; fi
-  bridge_port="$(mapped_port "3000/tcp" 3000)"
-  rtsp_port="$(mapped_port "8554/tcp" 8554)"
+  # Control and RTSP are not published on the host; use the internal add-on hostname.
+  bridge_host="$addon_host"
+  bridge_port=3000
+  rtsp_port=8554
 
   payload="$(jq -cn --arg host "$bridge_host" --argjson port "$bridge_port" --argjson rtsp_port "$rtsp_port" \
     '{service:"eufy_sdk",config:{host:$host,port:$port,go2rtc_rtsp_port:$rtsp_port}}')"

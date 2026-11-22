@@ -1,9 +1,8 @@
 name: eufy-sdk bridge (Talkback Fork)
-version: "0.1.8"
-image: ghcr.io/jjcazau/eufy-sdk-bridge-talkback-{arch}
+version: "0.1.8-de1"
 slug: eufy_sdk_bridge_talkback
 description: Experimental eufy-sdk bridge fork adding incoming camera audio and on-demand WebRTC microphone talkback.
-url: "https://github.com/jjcazau/ha-eufy-sdk-bridge"
+url: "https://github.com/guruerkan/ha-eufy-sdk-bridge"
 arch:
   - aarch64
   - amd64
@@ -14,14 +13,12 @@ discovery:
 ingress: true
 ingress_port: 3000
 panel_icon: mdi:doorbell-video
+# Only WebRTC media is published. Control (3000), RTSP (8554) and the go2rtc
+# API (1984) stay on the internal add-on network: they have no authentication.
 ports:
-  3000/tcp: 3001
-  8554/tcp: 8556
   8555/tcp: 8557
   8555/udp: 8557
 ports_description:
-  3000/tcp: Fork bridge WS + HTTP control
-  8554/tcp: go2rtc RTSP
   8555/tcp: go2rtc WebRTC TCP
   8555/udp: go2rtc WebRTC UDP
 options:
