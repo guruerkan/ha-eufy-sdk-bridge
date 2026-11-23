@@ -26,6 +26,7 @@ import { createSolix } from "./src/solix.mjs";
 import { createHttpHandler } from "./src/http-routes.mjs";
 import { createWsServer } from "./src/ws-server.mjs";
 import { closeStreamClients } from "./streams.mjs";
+import { createAssistSatellite } from "./src/assist-satellite.mjs";
 
 const config = loadConfig();
 const { cfg, DEBUG, DEBUG_P2P, EVENT_LOG, eventImageDir } = config;
@@ -100,13 +101,34 @@ async function main() {
   // Anker Solix is a separate account on a separate backend, so start it independently of the eufy
   // login above — its outcome never gates eufy devices. No-op unless SOLIX_* is configured.
   if (cfg.solix) void ctx.startSolix?.();
+
+  // Optional Assist wake-word satellite. It waits for the eufy login itself and never gates the bridge.
+  if (cfg.assist.enabled) {
+    try {
+      assistSatellite = createAssistSatellite({
+        cfg,
+        sn: cfg.assist.cameraSn,
+        token: process.env.SUPERVISOR_TOKEN,
+        wsUrl: cfg.assist.wsUrl,
+        pipelineId: cfg.assist.pipelineId,
+        wakeWordId: cfg.assist.wakeWordId,
+        wakeWordEntity: cfg.assist.wakeWordEntity,
+        isReady: () => state.flags.ready && !state.flags.recovering,
+        dbg: ctx.dbg,
+      });
+    } catch (e) {
+      console.error(`[bridge:assist] not started: ${e?.message ?? e}`);
+    }
+  }
 }
+let assistSatellite;
 
 async function shutdown() {
   const { timers, flags } = state;
   if (timers.watchdog) clearInterval(timers.watchdog);
   if (timers.streamIdle) clearInterval(timers.streamIdle);
   if (timers.rtspIdle) clearInterval(timers.rtspIdle);
+  assistSatellite?.stop();
   flags.go2rtcProc?.kill();
   await closeStreamClients();
   await ctx.stopSolix?.();

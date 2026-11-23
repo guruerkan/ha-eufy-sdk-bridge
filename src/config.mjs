@@ -146,6 +146,16 @@ export function loadConfig(env = process.env) {
             retryMaxMs: Number(env.SOLIX_RETRY_MAX_MS) || 60 * 60 * 1000,
           }
         : undefined,
+    // Optional Assist wake-word satellite (see src/assist-satellite.mjs): stream one camera's microphone
+    // to Home Assistant's assist_pipeline over the Core WebSocket API. Off unless ASSIST_SATELLITE is set.
+    assist: {
+      enabled: truthy(env.ASSIST_SATELLITE),
+      cameraSn: (env.ASSIST_CAMERA_SN || "").trim(),
+      pipelineId: (env.ASSIST_PIPELINE_ID || "").trim() || undefined, // empty → HA's preferred pipeline
+      wakeWordId: (env.ASSIST_WAKE_WORD_ID || "hey_jarvis").trim(),
+      wakeWordEntity: (env.ASSIST_WAKE_WORD_ENTITY || "wake_word.openwakeword").trim(),
+      wsUrl: env.HA_WS_URL || "ws://supervisor/core/websocket",
+    },
   };
   // Where the FCM push registration (token + seen-ids) is persisted, beside the session file. Without a
   // pushStore the SDK falls back to MemoryFcmStore and re-registers a fresh token on every restart —
