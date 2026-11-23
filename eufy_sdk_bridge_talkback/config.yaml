@@ -1,5 +1,5 @@
 name: eufy-sdk bridge (Talkback Fork)
-version: "0.1.8-de1"
+version: "0.1.9-de1"
 slug: eufy_sdk_bridge_talkback
 description: Experimental eufy-sdk bridge fork adding incoming camera audio and on-demand WebRTC microphone talkback.
 url: "https://github.com/guruerkan/ha-eufy-sdk-bridge"
@@ -8,6 +8,8 @@ arch:
   - amd64
 init: false
 hassio_api: true
+# Assist satellite only: lets the add-on reach ws://supervisor/core/websocket with SUPERVISOR_TOKEN.
+homeassistant_api: true
 discovery:
   - eufy_sdk
 ingress: true
@@ -34,6 +36,11 @@ options:
   debug_p2p: false
   go2rtc_enable: true
   webrtc_candidates: []
+  assist_satellite: false
+  assist_camera_sn: ""
+  assist_pipeline_id: ""
+  assist_wake_word_id: hey_jarvis
+  assist_wake_word_entity: wake_word.openwakeword
 schema:
   email: str
   password: password
@@ -49,3 +56,8 @@ schema:
   go2rtc_enable: bool
   webrtc_candidates:
     - str
+  assist_satellite: bool
+  assist_camera_sn: str
+  assist_pipeline_id: str
+  assist_wake_word_id: str
+  assist_wake_word_entity: str

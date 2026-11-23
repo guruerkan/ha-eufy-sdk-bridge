@@ -21,6 +21,13 @@ budget_ms="$(jq -r '.stream_battery_budget_ms // empty' "$OPTS")"
 [ "$(jq -r '.debug_p2p // false' "$OPTS")" = "true" ] && export BRIDGE_DEBUG_P2P=1
 [ "$(jq -r '.go2rtc_enable // true' "$OPTS")" = "false" ] && export GO2RTC_ENABLE=0
 
+# Optional Assist wake-word satellite (camera microphone → HA assist_pipeline over ws://supervisor).
+[ "$(jq -r '.assist_satellite // false' "$OPTS")" = "true" ] && export ASSIST_SATELLITE=1
+export ASSIST_CAMERA_SN="$(jq -r '.assist_camera_sn // ""' "$OPTS")"
+export ASSIST_PIPELINE_ID="$(jq -r '.assist_pipeline_id // ""' "$OPTS")"
+export ASSIST_WAKE_WORD_ID="$(jq -r '.assist_wake_word_id // "hey_jarvis"' "$OPTS")"
+export ASSIST_WAKE_WORD_ENTITY="$(jq -r '.assist_wake_word_entity // "wake_word.openwakeword"' "$OPTS")"
+
 # Advertise the published WebRTC port, not the container's :8555. Explicit candidates can also
 # include a VPN/public address. Otherwise discover the primary LAN address from Supervisor.
 export GO2RTC_WEBRTC_CANDIDATES="$(jq -r '(.webrtc_candidates // []) | join(",")' "$OPTS")"

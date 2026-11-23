@@ -17,7 +17,7 @@ RUN case "${BUILD_ARCH:-amd64}" in \
 WORKDIR /app
 ARG BRIDGE_REPO=https://github.com/guruerkan/ha-eufy-sdk-bridge.git
 # Pinned to the reviewed commit; never track a moving branch.
-ARG BRIDGE_REF=f3fbf7b304260f311f08a0ca25cb28e2f5d4684d
+ARG BRIDGE_REF=3587fd020de14342b47cac05a3982cf06f4c430f
 RUN git init /tmp/bridge \
  && git -C /tmp/bridge remote add origin "${BRIDGE_REPO}" \
  && git -C /tmp/bridge fetch --depth 1 origin "${BRIDGE_REF}" \

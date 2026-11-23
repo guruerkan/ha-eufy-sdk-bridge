@@ -100,3 +100,26 @@ From app version 0.1.2, GitHub Actions publishes prebuilt amd64 and aarch64 app 
 source checks pass. Supervisor downloads the image instead of installing ffmpeg and npm dependencies
 on the Home Assistant host. Each image embeds the exact Git commit being published. The Dockerfile
 remains available for local/source builds.
+
+## Assist wake-word satellite (optional)
+
+A mains-powered camera's microphone can act as a voice input for Home Assistant Assist, e.g.
+"Hey Jarvis, spiel Queen auf der Terrasse". The add-on reads the camera's live audio (the same
+16 kHz mono PCM go2rtc uses) and streams it to Home Assistant over the internal Supervisor WebSocket
+(`assist_pipeline/run`, wake word → speech-to-text → intent). No reply is played through the camera;
+the action itself (music starting) is the feedback. No port is opened.
+
+```yaml
+assist_satellite: true
+assist_camera_sn: T8170XXXXXXXXXXX # the camera's serial
+assist_pipeline_id: "" # empty = preferred pipeline
+assist_wake_word_id: hey_jarvis
+assist_wake_word_entity: wake_word.openwakeword
+```
+
+- The wake word is taken from the **pipeline** (Settings → Voice assistants → pipeline → Streaming
+  wake word), not from the run request. The two `assist_wake_word_*` options are only checked against
+  the pipeline at startup; the log says if they differ.
+- The pipeline needs a wake-word engine (openWakeWord), speech-to-text and a conversation agent.
+- Keep this for mains-powered cameras only: the camera's live session stays open permanently.
+- The log shows one `[bridge:assist]` line per detected wake word, transcript and intent result.
