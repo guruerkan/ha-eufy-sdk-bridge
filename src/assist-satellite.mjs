@@ -25,7 +25,7 @@ const MAX_WS_BUFFERED = 512 * 1024; // drop audio rather than queue unboundedly 
 const QUIET_ERRORS = new Set(["wake-word-timeout"]);
 
 /** The `assist_pipeline/run` command for one wake-word → intent run. */
-export function buildRunMessage(id, { pipelineId, wakeTimeoutS = 3, noiseSuppressionLevel = 0 } = {}) {
+export function buildRunMessage(id, { pipelineId, wakeTimeoutS = 60, noiseSuppressionLevel = 0 } = {}) {
   const msg = {
     id,
     type: "assist_pipeline/run",

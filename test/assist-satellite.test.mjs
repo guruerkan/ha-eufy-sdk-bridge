@@ -10,7 +10,7 @@ test("run message: wake_word → intent, 16 kHz input, pipeline only when set", 
     type: "assist_pipeline/run",
     start_stage: "wake_word",
     end_stage: "intent",
-    input: { sample_rate: 16000, timeout: 3, noise_suppression_level: 0 },
+    input: { sample_rate: 16000, timeout: 60, noise_suppression_level: 0 },
   });
   assert.equal(buildRunMessage(6, { pipelineId: "abc" }).pipeline, "abc");
 });
